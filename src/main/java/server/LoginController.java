@@ -17,15 +17,15 @@ public class LoginController {
     private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERs_FILENAME));
 
     @RequestMapping(value = "/signin", consumes = "application/json", method = RequestMethod.POST)
-    public Response signIn(User loginRequest){
+    public Response signIn(User logInRequest){
         if(userMap.isEmpty()){
             userMap = fileManager.readUsersFromFile();
         }
-        if(isUserExists(loginRequest)){
-            User user = userMap.get(loginRequest.getUsername());
-            if (isCorrectPassword(user, loginRequest.getPassword())){
+        if(isUserExists(logInRequest)){
+            User user = userMap.get(logInRequest.getUsername());
+            if (isCorrectPassword(user, logInRequest.getPassword())){
                 if (!user.isOnline()){
-                    userMap.get(loginRequest.getUsername()).setOnline(true);
+                    userMap.get(logInRequest.getUsername()).setOnline(true);
                     return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.");
                 }else {
                     return new Response(Statuses.LOGGED.toString(), "User is online.");
@@ -46,6 +46,9 @@ public class LoginController {
         return user.getPassword().equals(potentialPassword);
     }
 
-
+    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.POST)
+    public Response signOut(User logOutRequest){
+        return new Response("","");
+    }
 
 }
