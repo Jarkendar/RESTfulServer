@@ -7,17 +7,19 @@ public class User {
     private String email;
     private String facebookProfile;
     private String googlePlusProfile;
+    private boolean online;
 
     public User() {
     }
 
-    public User(String id, String username, String password, String email, String facebookProfile, String googlePlusProfile) {
+    public User(String id, String username, String password, String email, String facebookProfile, String googlePlusProfile, boolean online) {
         this.id = id;
         this.setUsername(username);
         this.setPassword(password);
         this.setEmail(email);
         this.setFacebookProfile(facebookProfile);
         this.setGooglePlusProfile(googlePlusProfile);
+        this.setOnline(online);
     }
 
 
@@ -63,5 +65,13 @@ public class User {
 
     public void setGooglePlusProfile(String googlePlusProfile) {
         this.googlePlusProfile = googlePlusProfile;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }

@@ -22,7 +22,7 @@ public class FileManager {
             AtomicLong atomicLong = new AtomicLong();
             while ((line = bufferedReader.readLine()) != null){
                 readData = line.split(";");
-                users.put(readData[0], new User(Long.toString(atomicLong.incrementAndGet()), readData[0], readData[1], readData[2], readData[3], readData[4]));
+                users.put(readData[0], new User(Long.toString(atomicLong.incrementAndGet()), readData[0], readData[1], readData[2], readData[3], readData[4], Boolean.getBoolean(readData[5])));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,7 +40,8 @@ public class FileManager {
                         .append(user.getPassword()).append(";")
                         .append(user.getEmail()).append(";")
                         .append(user.getFacebookProfile()).append(";")
-                        .append(user.getGooglePlusProfile());
+                        .append(user.getGooglePlusProfile()).append(";")
+                        .append(Boolean.toString(user.isOnline()));
                 bufferedWriter.write(stringBuilder.toString());
                 bufferedWriter.newLine();
                 stringBuilder.setLength(0);
