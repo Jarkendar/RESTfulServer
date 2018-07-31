@@ -3,6 +3,10 @@ package server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * This is my first RESTful server. It isn't security. It isn't commercial. It created to learn new things.
+ */
+
 @SpringBootApplication
 public class Application {
 
