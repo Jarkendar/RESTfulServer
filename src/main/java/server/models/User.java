@@ -63,4 +63,9 @@ public class User {
     public void setTOKEN(String TOKEN) {
         this.TOKEN = TOKEN;
     }
+
+    @Override
+    public String toString(){
+        return String.format("%s %s %s %s",getUsername(), getEmail(), isOnline(), getTOKEN());
+    }
 }
