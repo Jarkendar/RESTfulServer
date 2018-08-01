@@ -8,6 +8,7 @@ public class User {
     private String facebookProfile;
     private String googlePlusProfile;
     private boolean online;
+    private String TOKEN;
 
     public User() {
     }
@@ -73,5 +74,13 @@ public class User {
 
     public void setOnline(boolean online) {
         this.online = online;
+    }
+
+    public String getTOKEN() {
+        return TOKEN;
+    }
+
+    public void setTOKEN(String TOKEN) {
+        this.TOKEN = TOKEN;
     }
 }

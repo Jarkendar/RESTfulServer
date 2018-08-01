@@ -5,5 +5,6 @@ public enum Statuses {
     EXISTS,
     NOT_EXISTS,
     INCORRECT_PASSWORD,
-    LOGGED
+    LOGGED,
+    NOT_LOGGED
 }

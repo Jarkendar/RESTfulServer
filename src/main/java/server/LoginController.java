@@ -7,6 +7,8 @@ import server.models.User;
 import server.models.Response;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 @RestController
@@ -18,15 +20,14 @@ public class LoginController {
 
     @RequestMapping(value = "/signin", consumes = "application/json", method = RequestMethod.POST)
     public Response signIn(User logInRequest){
-        if(userMap.isEmpty()){
-            userMap = fileManager.readUsersFromFile();
-        }
+        prepareUserMap();
         if(isUserExists(logInRequest)){
             User user = userMap.get(logInRequest.getUsername());
             if (isCorrectPassword(user, logInRequest.getPassword())){
                 if (!user.isOnline()){
                     userMap.get(logInRequest.getUsername()).setOnline(true);
-                    return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.");
+                    userMap.get(logInRequest.getUsername()).setTOKEN(generateToken(logInRequest.getUsername()));
+                    return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getTOKEN());
                 }else {
                     return new Response(Statuses.LOGGED.toString(), "User is online.");
                 }
@@ -38,6 +39,28 @@ public class LoginController {
         }
     }
 
+    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.POST)
+    public Response signOut(User logOutRequest){
+        prepareUserMap();
+        if (isUserExists(logOutRequest)){
+            User user = userMap.get(logOutRequest.getUsername());
+            if (user.isOnline()){
+                userMap.get(logOutRequest.getUsername()).setOnline(false);
+                return new Response(Statuses.OK.toString(), "User is offline");
+            }else{
+                return new Response(Statuses.NOT_LOGGED.toString(), "User is not logged.");
+            }
+        }else {
+            return new Response(Statuses.NOT_EXISTS.toString(), "User not exists.");
+        }
+    }
+
+    private void prepareUserMap(){
+        if (userMap.isEmpty()){
+            userMap = fileManager.readUsersFromFile();
+        }
+    }
+
     private boolean isUserExists(User request){
         return userMap.get(request.getUsername()) != null;
     }
@@ -46,9 +69,16 @@ public class LoginController {
         return user.getPassword().equals(potentialPassword);
     }
 
-    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.POST)
-    public Response signOut(User logOutRequest){
-        return new Response("","");
+    private String generateToken(String userName){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : userName.toCharArray()){
+            stringBuilder.append(Integer.toHexString(c));
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmssZ");
+        stringBuilder.append(simpleDateFormat.format(new Date()));
+        return stringBuilder.toString();
     }
+
+
 
 }
