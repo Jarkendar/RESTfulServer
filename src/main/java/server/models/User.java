@@ -5,21 +5,17 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private String facebookProfile;
-    private String googlePlusProfile;
     private boolean online;
     private String TOKEN;
 
     public User() {
     }
 
-    public User(String id, String username, String password, String email, String facebookProfile, String googlePlusProfile, boolean online) {
+    public User(String id, String username, String password, String email, boolean online) {
         this.id = id;
         this.setUsername(username);
         this.setPassword(password);
         this.setEmail(email);
-        this.setFacebookProfile(facebookProfile);
-        this.setGooglePlusProfile(googlePlusProfile);
         this.setOnline(online);
     }
 
@@ -50,22 +46,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getFacebookProfile() {
-        return facebookProfile;
-    }
-
-    public void setFacebookProfile(String facebookProfile) {
-        this.facebookProfile = facebookProfile;
-    }
-
-    public String getGooglePlusProfile() {
-        return googlePlusProfile;
-    }
-
-    public void setGooglePlusProfile(String googlePlusProfile) {
-        this.googlePlusProfile = googlePlusProfile;
     }
 
     public boolean isOnline() {

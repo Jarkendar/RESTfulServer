@@ -39,7 +39,7 @@ public class LoginController {
         }
     }
 
-    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.POST)
+    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.PUT)
     public Response signOut(User logOutRequest){
         prepareUserMap();
         if (isUserExists(logOutRequest)){
@@ -52,6 +52,18 @@ public class LoginController {
             }
         }else {
             return new Response(Statuses.NOT_EXISTS.toString(), "User not exists.");
+        }
+    }
+
+    @RequestMapping(value = "/register", consumes = "application/json", method = RequestMethod.POST)
+    public Response register(User newUser){
+        prepareUserMap();
+        if (!isUserExists(newUser)){
+            userMap.put(newUser.getUsername(), new User(fileManager.getNextID(), newUser.getUsername(), newUser.getPassword(), newUser.getEmail(), false));
+            fileManager.saveUsersToFile(userMap);
+            return new Response(Statuses.OK.toString(), "New user register.");
+        }else {
+            return new Response(Statuses.EXISTS.toString(),"User already exists.");
         }
     }
 

@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FileManager {
 
     private File file;
+    private AtomicLong atomicLong = new AtomicLong();
 
     public FileManager(File file) {
         this.file = file;
@@ -19,10 +20,9 @@ public class FileManager {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))){
             String line;
             String[] readData;
-            AtomicLong atomicLong = new AtomicLong();
             while ((line = bufferedReader.readLine()) != null){
                 readData = line.split(";");
-                users.put(readData[0], new User(Long.toString(atomicLong.incrementAndGet()), readData[0], readData[1], readData[2], readData[3], readData[4], Boolean.getBoolean(readData[5])));
+                users.put(readData[0], new User(getNextID(), readData[0], readData[1], readData[2], Boolean.getBoolean(readData[3])));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -39,8 +39,6 @@ public class FileManager {
                 stringBuilder.append(user.getUsername()).append(";")
                         .append(user.getPassword()).append(";")
                         .append(user.getEmail()).append(";")
-                        .append(user.getFacebookProfile()).append(";")
-                        .append(user.getGooglePlusProfile()).append(";")
                         .append(Boolean.toString(user.isOnline()));
                 bufferedWriter.write(stringBuilder.toString());
                 bufferedWriter.newLine();
@@ -50,5 +48,9 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getNextID() {
+        return Long.toString(atomicLong.incrementAndGet());
     }
 }
