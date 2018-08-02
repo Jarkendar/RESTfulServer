@@ -2,6 +2,7 @@ package server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class LoginController {
     private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERs_FILENAME));
 
     @RequestMapping(value = "/signin", consumes = "application/json", method = RequestMethod.POST)
-    public Response signIn(User logInRequest) {
+    public Response signIn(@RequestBody User logInRequest) {
         logger.info("sign in user = " + logInRequest);
         prepareUserMap();
         if (isUserExists(logInRequest)) {
@@ -49,7 +50,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.PUT)
-    public Response signOut(User logOutRequest) {
+    public Response signOut(@RequestBody User logOutRequest) {
         logger.info("sign out user = " + logOutRequest);
         prepareUserMap();
         if (isUserExists(logOutRequest)) {
@@ -69,7 +70,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/register", consumes = "application/json", method = RequestMethod.POST)
-    public Response register(User newUser) {
+    public Response register(@RequestBody User newUser) {
         logger.info("register user = " + newUser);
         prepareUserMap();
         if (!isUserExists(newUser)) {
