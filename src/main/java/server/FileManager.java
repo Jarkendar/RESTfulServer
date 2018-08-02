@@ -7,6 +7,7 @@ import server.models.User;
 import java.io.*;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class FileManager {
@@ -20,8 +21,8 @@ public class FileManager {
         this.file = file;
     }
 
-    public synchronized HashMap<String, User> readUsersFromFile() {
-        logger.info("read users from file = " + new Date());
+    public synchronized Map<String, User> readUsersFromFile() {
+        logger.info("read users from file = {}", new Date());
         HashMap<String, User> users = new HashMap<>();
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -30,14 +31,14 @@ public class FileManager {
                 readData = line.split(";");
                 users.put(readData[0], new User(getNextID(), readData[0], readData[1], readData[2], Boolean.getBoolean(readData[3])));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            logger.error(exception.toString());
         }
         return users;
     }
 
-    public synchronized void saveUsersToFile(HashMap<String, User> users) {
-        logger.info("save users to file = " + new Date());
+    public synchronized void saveUsersToFile(Map<String, User> users) {
+        logger.info("save users to file = {}", new Date());
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             StringBuilder stringBuilder = new StringBuilder();
             User user;
@@ -52,8 +53,8 @@ public class FileManager {
                 stringBuilder.setLength(0);
             }
             bufferedWriter.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            logger.error(exception.toString());
         }
     }
 

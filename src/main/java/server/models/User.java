@@ -6,7 +6,7 @@ public class User {
     private String password;
     private String email;
     private boolean online;
-    private String TOKEN;
+    private String token;
 
     public User() {
     }
@@ -56,16 +56,16 @@ public class User {
         this.online = online;
     }
 
-    public String getTOKEN() {
-        return TOKEN;
+    public String getToken() {
+        return token;
     }
 
-    public void setTOKEN(String TOKEN) {
-        this.TOKEN = TOKEN;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override
     public String toString(){
-        return String.format("%s %s %s %s",getUsername(), getEmail(), isOnline(), getTOKEN());
+        return String.format("%s %s %s %s",getUsername(), getEmail(), isOnline(), getToken());
     }
 }

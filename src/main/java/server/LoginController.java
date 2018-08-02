@@ -2,10 +2,7 @@ package server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.models.Response;
 import server.models.User;
 
@@ -13,6 +10,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/login", produces = "application/json")
@@ -20,66 +18,66 @@ public class LoginController {
 
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    private HashMap<String, User> userMap = new HashMap<>();
-    private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERs_FILENAME));
+    private Map<String, User> userMap = new HashMap<>();
+    private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERS_FILENAME));
 
-    @RequestMapping(value = "/signin", consumes = "application/json", method = RequestMethod.POST)
+    @PostMapping(value = "/signin", consumes = "application/json")
     public Response signIn(@RequestBody User logInRequest) {
-        logger.info("sign in user = " + logInRequest);
+        logger.info("sign in user = {}", logInRequest);
         prepareUserMap();
         if (isUserExists(logInRequest)) {
             User user = userMap.get(logInRequest.getUsername());
             if (isCorrectPassword(user, logInRequest.getPassword())) {
                 if (!user.isOnline()) {
                     userMap.get(logInRequest.getUsername()).setOnline(true);
-                    userMap.get(logInRequest.getUsername()).setTOKEN(generateToken(logInRequest.getUsername()));
-                    logger.info("sign in success = " + userMap.get(logInRequest.getUsername()));
-                    return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getTOKEN());
+                    userMap.get(logInRequest.getUsername()).setToken(generateToken(logInRequest.getUsername()));
+                    logger.info("sign in success = {}", userMap.get(logInRequest.getUsername()));
+                    return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken());
                 } else {
-                    logger.info("sign in - User is online = " + logInRequest);
+                    logger.info("sign in - User is online = {}", logInRequest);
                     return new Response(Statuses.LOGGED.toString(), "User is online.");
                 }
             } else {
-                logger.info("sign in - Wrong password = " + logInRequest);
+                logger.info("sign in - Wrong password = {}", logInRequest);
                 return new Response(Statuses.INCORRECT_PASSWORD.toString(), "Wrong password.");
             }
         } else {
-            logger.info("sign in - User not exist = " + logInRequest);
+            logger.info("sign in - User not exist = {}", logInRequest);
             return new Response(Statuses.NOT_EXISTS.toString(), "User not exists.");
         }
     }
 
-    @RequestMapping(value = "/signout", consumes = "application/json", method = RequestMethod.PUT)
+    @PutMapping(value = "/signout", consumes = "application/json")
     public Response signOut(@RequestBody User logOutRequest) {
-        logger.info("sign out user = " + logOutRequest);
+        logger.info("sign out user = {}", logOutRequest);
         prepareUserMap();
         if (isUserExists(logOutRequest)) {
             User user = userMap.get(logOutRequest.getUsername());
             if (user.isOnline()) {
                 userMap.get(logOutRequest.getUsername()).setOnline(false);
-                logger.info("sign out success = " + userMap.get(logOutRequest.getUsername()));
+                logger.info("sign out success = {}", userMap.get(logOutRequest.getUsername()));
                 return new Response(Statuses.OK.toString(), "User is offline");
             } else {
-                logger.info("sign out - User is not logged = " + logOutRequest);
+                logger.info("sign out - User is not logged = {}", logOutRequest);
                 return new Response(Statuses.NOT_LOGGED.toString(), "User is not logged.");
             }
         } else {
-            logger.info("sign out - User not exists = " + logOutRequest);
+            logger.info("sign out - User not exists = {}", logOutRequest);
             return new Response(Statuses.NOT_EXISTS.toString(), "User not exists.");
         }
     }
 
-    @RequestMapping(value = "/register", consumes = "application/json", method = RequestMethod.POST)
+    @PostMapping(value = "/register", consumes = "application/json")
     public Response register(@RequestBody User newUser) {
-        logger.info("register user = " + newUser);
+        logger.info("register user = {}", newUser);
         prepareUserMap();
         if (!isUserExists(newUser)) {
             userMap.put(newUser.getUsername(), new User(fileManager.getNextID(), newUser.getUsername(), newUser.getPassword(), newUser.getEmail(), false));
             fileManager.saveUsersToFile(userMap);
-            logger.info("register success = " + userMap.get(newUser.getUsername()));
+            logger.info("register success = {}", userMap.get(newUser.getUsername()));
             return new Response(Statuses.OK.toString(), "New user register.");
         } else {
-            logger.info("register - User already exists = " + newUser);
+            logger.info("register - User already exists = {}", newUser);
             return new Response(Statuses.EXISTS.toString(), "User already exists.");
         }
     }
