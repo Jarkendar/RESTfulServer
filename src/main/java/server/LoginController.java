@@ -35,7 +35,7 @@ public class LoginController {
                     return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken());
                 } else {
                     logger.info("sign in - User is online = {}", logInRequest);
-                    return new Response(Statuses.LOGGED.toString(), "User is online.");
+                    return new Response(Statuses.LOGGED.toString(), "User is online.", userMap.get(logInRequest.getUsername()).getToken());
                 }
             } else {
                 logger.info("sign in - Wrong password = {}", logInRequest);
