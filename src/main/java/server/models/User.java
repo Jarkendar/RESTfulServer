@@ -11,6 +11,12 @@ public class User {
     public User() {
     }
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        online = false;
+    }
+
     public User(String id, String username, String password, String email, boolean online) {
         this.id = id;
         this.setUsername(username);
