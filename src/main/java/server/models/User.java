@@ -11,8 +11,13 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password) {
-        this.username = username;
+    public User(String login, String password) {
+        if (login.contains("@")){
+            this.email = login;
+            this.username = login;
+        }else {
+            this.username = login;
+        }
         this.password = password;
         online = false;
     }
