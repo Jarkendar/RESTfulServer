@@ -8,5 +8,5 @@ public enum DifficultyLevel{
     EASY,
     NORMAL,
     HARD,
-    VERY_HARD;
+    VERY_HARD
 }

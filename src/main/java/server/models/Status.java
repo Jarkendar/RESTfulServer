@@ -8,5 +8,5 @@ public enum Status{
     SUCCEED,//end and success
     VERIFY,//end and verify
     CURRENT,//actual challenge
-    CHALLENGE;//my challenge to friend
+    CHALLENGE//my challenge to friend
 }

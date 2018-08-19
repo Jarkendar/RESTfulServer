@@ -17,7 +17,7 @@ public class FileManager {
 
     private File file;
     private AtomicLong atomicLong = new AtomicLong();
-    private String CHALLENGES_FILE_SUFFIX = "/challenges.txt";
+    private static final String CHALLENGES_FILE_SUFFIX = "/challenges.txt";
 
     public FileManager(File file) {
         this.file = file;
@@ -60,17 +60,17 @@ public class FileManager {
         }
     }
 
-    public synchronized void saveChallenge(Challenge challenge){
+    public synchronized void saveChallenge(Challenge challenge) {
         File directory = new File(challenge.getUserReceiver());
-        if (!directory.exists()){
-            try{
+        if (!directory.exists()) {
+            try {
                 directory.mkdir();
-            }catch (SecurityException se){
+            } catch (SecurityException se) {
                 logger.error(se.toString());
             }
         }
-        File challengesFile = new File(challenge.getUserReceiver()+CHALLENGES_FILE_SUFFIX);
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(challengesFile, true))){
+        File challengesFile = new File(challenge.getUserReceiver() + CHALLENGES_FILE_SUFFIX);
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(challengesFile, true))) {
             String stringBuilder = challenge.getChallengeID() + ";" +
                     challenge.getTitle() + ";" +
                     challenge.getDescription() + ";" +
@@ -85,25 +85,25 @@ public class FileManager {
             bufferedWriter.write(stringBuilder);
             bufferedWriter.newLine();
             bufferedWriter.flush();
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.toString());
         }
     }
 
-    public synchronized List<Challenge> readAllChallengesFromUser(String username){
+    public synchronized List<Challenge> readAllChallengesFromUser(String username) {
         LinkedList<Challenge> challenges = new LinkedList<>();
-        File challengeFile = new File(username+CHALLENGES_FILE_SUFFIX);
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(challengeFile))){
+        File challengeFile = new File(username + CHALLENGES_FILE_SUFFIX);
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(challengeFile))) {
             String line;
-            while ((line = bufferedReader.readLine()) != null){
+            while ((line = bufferedReader.readLine()) != null) {
                 String[] fields = line.split(";");
-                challenges.addLast(new Challenge(fields[0],fields[1],fields[2],
-                        new Date(Long.parseLong(fields[3])),new Date(Long.parseLong(fields[4])),
-                        DifficultyLevel.valueOf(fields[5]),Status.valueOf(fields[6]),fields[7],
-                        fields[8],Boolean.getBoolean(fields[9]),
+                challenges.addLast(new Challenge(fields[0], fields[1], fields[2],
+                        new Date(Long.parseLong(fields[3])), new Date(Long.parseLong(fields[4])),
+                        DifficultyLevel.valueOf(fields[5]), Status.valueOf(fields[6]), fields[7],
+                        fields[8], Boolean.getBoolean(fields[9]),
                         (fields[10].equals("null") ? null : new Date(Long.parseLong(fields[10])))));
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             logger.error(e.toString());
         }
         return challenges;

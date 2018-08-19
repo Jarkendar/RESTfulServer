@@ -8,5 +8,5 @@ public enum Statuses {
     LOGGED,
     NOT_LOGGED,
     USER_NOT_LOGGED,
-    CHALLENGE_SAVED;
+    CHALLENGE_SAVED
 }
