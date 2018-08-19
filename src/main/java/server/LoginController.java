@@ -21,6 +21,10 @@ public class LoginController {
     private Map<String, User> userMap = new HashMap<>();
     private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERS_FILENAME));
 
+    public Map<String, User> getUserMap() {
+        return userMap;
+    }
+
     @PostMapping(value = "/signin", consumes = "application/json")
     public Response signIn(@RequestBody User logInRequest) {
         logger.info("sign in user = {}", logInRequest);
