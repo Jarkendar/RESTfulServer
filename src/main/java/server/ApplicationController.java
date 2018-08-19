@@ -2,7 +2,9 @@ package server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
+import server.models.Challenge;
 import server.models.Response;
 import server.models.User;
 
@@ -13,10 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/login", produces = "application/json")
-public class LoginController {
+@RequestMapping(produces = "application/json")
+public class ApplicationController {
 
-    private Logger logger = LoggerFactory.getLogger(LoginController.class);
+    private Logger logger = LoggerFactory.getLogger(ApplicationController.class);
 
     private Map<String, User> userMap = new HashMap<>();
     private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERS_FILENAME));
@@ -25,7 +27,7 @@ public class LoginController {
         return userMap;
     }
 
-    @PostMapping(value = "/signin", consumes = "application/json")
+    @PostMapping(value = "/login/signin", consumes = "application/json")
     public Response signIn(@RequestBody User logInRequest) {
         logger.info("sign in user = {}", logInRequest);
         prepareUserMap();
@@ -51,7 +53,7 @@ public class LoginController {
         }
     }
 
-    @PutMapping(value = "/signout", consumes = "application/json")
+    @PutMapping(value = "/login/signout", consumes = "application/json")
     public Response signOut(@RequestBody User logOutRequest) {
         logger.info("sign out user = {}", logOutRequest);
         prepareUserMap();
@@ -71,7 +73,7 @@ public class LoginController {
         }
     }
 
-    @PostMapping(value = "/register", consumes = "application/json")
+    @PostMapping(value = "/login/register", consumes = "application/json")
     public Response register(@RequestBody User newUser) {
         logger.info("register user = {}", newUser);
         prepareUserMap();
@@ -83,6 +85,16 @@ public class LoginController {
         } else {
             logger.info("register - User already exists = {}", newUser);
             return new Response(Statuses.EXISTS.toString(), "User already exists.");
+        }
+    }
+
+    @PostMapping(value = "/challenge/insert", consumes = "application/json")
+    public Response insertChallenge(Challenge challenge){
+        if (userMap.containsKey(challenge.getUserReceiver())){
+            fileManager.saveChallenge(challenge);
+            return new Response(Statuses.CHALLENGE_SAVED.toString(), "Challenge saved");
+        }else{
+            return new Response(Statuses.USER_NOT_LOGGED.toString(), "User is not logged");
         }
     }
 

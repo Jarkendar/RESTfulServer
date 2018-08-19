@@ -13,13 +13,14 @@ public class Challenge {
     private String userReceiver;
     private String userSender;
     private boolean synchronize;
+    private Date endTime;
 
     public Challenge() {
     }
 
     public Challenge(String challengeID, String title, String description, Date startTime, Date lastStatusModifiedTime,
                      DifficultyLevel difficultyLevel, Status status, String userReceiver, String userSender,
-                     boolean synchronize) {
+                     boolean synchronize, Date endTime) {
         this.challengeID = challengeID;
         this.title = title;
         this.description = description;
@@ -30,6 +31,7 @@ public class Challenge {
         this.userReceiver = userReceiver;
         this.userSender = userSender;
         this.synchronize = synchronize;
+        this.endTime = endTime;
     }
 
     public String getChallengeID() {
@@ -110,5 +112,13 @@ public class Challenge {
 
     public void setSynchronize(boolean synchronize) {
         this.synchronize = synchronize;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }
