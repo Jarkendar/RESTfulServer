@@ -13,7 +13,6 @@ import server.models.User;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(produces = "application/json")
@@ -35,18 +34,18 @@ public class ApplicationController {
                     userMap.get(logInRequest.getUsername()).setOnline(true);
                     userMap.get(logInRequest.getUsername()).setToken(generateToken(logInRequest.getUsername()));
                     logger.info("sign in success = {}", userMap.get(logInRequest.getUsername()));
-                    return new ResponseEntity<Response>(new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
+                    return new ResponseEntity<>(new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
                 } else {
                     logger.info("sign in - User is online = {}", logInRequest);
-                    return new ResponseEntity<Response>(new Response(Statuses.LOGGED.toString(), "User is online.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
+                    return new ResponseEntity<>(new Response(Statuses.LOGGED.toString(), "User is online.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
                 }
             } else {
                 logger.info("sign in - Wrong password = {}", logInRequest);
-                return new ResponseEntity<Response>(new Response(Statuses.INCORRECT_PASSWORD.toString(), "Wrong password."), HttpStatus.OK);
+                return new ResponseEntity<>(new Response(Statuses.INCORRECT_PASSWORD.toString(), "Wrong password."), HttpStatus.OK);
             }
         } else {
             logger.info("sign in - User not exist = {}", logInRequest);
-            return new ResponseEntity<Response>(new Response(Statuses.NOT_EXISTS.toString(), "User not exists."), HttpStatus.OK);
+            return new ResponseEntity<>(new Response(Statuses.NOT_EXISTS.toString(), "User not exists."), HttpStatus.OK);
         }
     }
 
@@ -124,7 +123,8 @@ public class ApplicationController {
         for (Challenge challenge : challengeHashSet){
             stringBuilder.append(challenge).append("\n");
         }
-        logger.info("deleteDuplicate = {}", stringBuilder.toString());
+        String list = stringBuilder.toString();
+        logger.info("deleteDuplicate = {}", list);
         return new ArrayList<>(challengeHashSet);
     }
 

@@ -1,6 +1,7 @@
 package server.models;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class Challenge {
     private String challengeID;
@@ -141,7 +142,18 @@ public class Challenge {
 
     @Override
     public boolean equals(Object challenge) {
+        if (challenge == null){
+            return false;
+        }
+        if (!(challenge instanceof Challenge)){
+            return false;
+        }
         Challenge c = (Challenge) challenge;
         return this.challengeID.equals(c.challengeID) && this.getStatus().compareTo(c.status) == 0 && this.startTime.compareTo(c.startTime) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(challengeID, title, description, startTime, lastStatusModifiedTime, difficultyLevel, status, userReceiver, userSender, synchronize, endTime);
     }
 }
