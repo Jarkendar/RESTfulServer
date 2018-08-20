@@ -2,16 +2,18 @@ package server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import server.models.AllChallengeRequest;
 import server.models.Challenge;
 import server.models.Response;
 import server.models.User;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(produces = "application/json")
@@ -22,12 +24,8 @@ public class ApplicationController {
     private Map<String, User> userMap = new HashMap<>();
     private FileManager fileManager = new FileManager(new File(Application.REGISTERED_USERS_FILENAME));
 
-    public Map<String, User> getUserMap() {
-        return userMap;
-    }
-
     @PostMapping(value = "/login/signin", consumes = "application/json")
-    public Response signIn(@RequestBody User logInRequest) {
+    public ResponseEntity<Response> signIn(@RequestBody User logInRequest) {
         logger.info("sign in user = {}", logInRequest);
         prepareUserMap();
         if (isUserExists(logInRequest)) {
@@ -37,18 +35,18 @@ public class ApplicationController {
                     userMap.get(logInRequest.getUsername()).setOnline(true);
                     userMap.get(logInRequest.getUsername()).setToken(generateToken(logInRequest.getUsername()));
                     logger.info("sign in success = {}", userMap.get(logInRequest.getUsername()));
-                    return new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken());
+                    return new ResponseEntity<Response>(new Response(Statuses.OK.toString(), "Successful sign in. You are online now.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
                 } else {
                     logger.info("sign in - User is online = {}", logInRequest);
-                    return new Response(Statuses.LOGGED.toString(), "User is online.", userMap.get(logInRequest.getUsername()).getToken());
+                    return new ResponseEntity<Response>(new Response(Statuses.LOGGED.toString(), "User is online.", userMap.get(logInRequest.getUsername()).getToken()), HttpStatus.OK);
                 }
             } else {
                 logger.info("sign in - Wrong password = {}", logInRequest);
-                return new Response(Statuses.INCORRECT_PASSWORD.toString(), "Wrong password.");
+                return new ResponseEntity<Response>(new Response(Statuses.INCORRECT_PASSWORD.toString(), "Wrong password."), HttpStatus.OK);
             }
         } else {
             logger.info("sign in - User not exist = {}", logInRequest);
-            return new Response(Statuses.NOT_EXISTS.toString(), "User not exists.");
+            return new ResponseEntity<Response>(new Response(Statuses.NOT_EXISTS.toString(), "User not exists."), HttpStatus.OK);
         }
     }
 
@@ -89,18 +87,45 @@ public class ApplicationController {
 
     @PostMapping(value = "/challenge/insert", consumes = "application/json")
     public Response insertChallenge(Challenge challenge) {
+        logger.info("insert challenge = {}", challenge);
         if (userMap.containsKey(challenge.getUserReceiver())) {
+            logger.info("userMap contains user");
             fileManager.saveChallenge(challenge);
             return new Response(Statuses.CHALLENGE_SAVED.toString(), "Challenge saved");
         } else {
+            logger.info("userMap not contains user");
             return new Response(Statuses.USER_NOT_LOGGED.toString(), "User is not logged");
         }
+    }
+
+    @PostMapping(value = "/challenge/getAll", consumes = "application/json")
+    public List<Challenge> getAllUserChallenges(@RequestBody AllChallengeRequest request){
+        logger.info("getAllUserChallenge = {}", request );
+        if (userMap.containsKey(request.getUser().getUsername()) && userMap.get(request.getUser().getUsername()).getToken().equals(request.getUser().getToken())){
+            logger.info("");
+            return deleteDuplicateFromList(request.getChallengeList(),fileManager.readAllChallengesFromUser(request.getUser().getUsername()));
+        }else {
+            return new LinkedList();
+        }
+
     }
 
     private void prepareUserMap() {
         if (userMap.isEmpty()) {
             userMap = fileManager.readUsersFromFile();
         }
+    }
+
+    private List<Challenge> deleteDuplicateFromList(List<Challenge> requestChallenges, List<Challenge> readChallenges){
+        HashSet<Challenge> challengeHashSet = new HashSet<>(readChallenges);
+        challengeHashSet.addAll(readChallenges);
+        challengeHashSet.removeAll(requestChallenges);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (Challenge challenge : challengeHashSet){
+            stringBuilder.append(challenge).append("\n");
+        }
+        logger.info("deleteDuplicate = {}", stringBuilder.toString());
+        return new ArrayList<>(challengeHashSet);
     }
 
     private boolean isUserExists(User request) {

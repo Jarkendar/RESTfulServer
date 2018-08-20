@@ -121,4 +121,27 @@ public class Challenge {
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
+
+    @Override
+    public String toString() {
+        return "Challenge{" +
+                "challengeID='" + challengeID + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", startTime=" + startTime +
+                ", lastStatusModifiedTime=" + lastStatusModifiedTime +
+                ", difficultyLevel=" + difficultyLevel +
+                ", status=" + status +
+                ", userReceiver='" + userReceiver + '\'' +
+                ", userSender='" + userSender + '\'' +
+                ", synchronize=" + synchronize +
+                ", endTime=" + endTime +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object challenge) {
+        Challenge c = (Challenge) challenge;
+        return this.challengeID.equals(c.challengeID) && this.getStatus().compareTo(c.status) == 0 && this.startTime.compareTo(c.startTime) == 0;
+    }
 }
